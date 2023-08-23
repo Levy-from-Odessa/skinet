@@ -2,6 +2,8 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.Data;
 using Core.Interfaces;
+using Infrastructure.Data.SeedData;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,5 +31,11 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var context = services.GetRequiredService<StoreContext>();
+var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+await StoreContextSeed.SeedAsync(context, loggerFactory);
 
 app.Run();
